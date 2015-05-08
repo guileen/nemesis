@@ -1,0 +1,36 @@
+# plugins:
+#     server: lua.ServerModule
+#     routes: lua.RouteModule
+#     etag: lua.EtagModule
+
+upstream:
+    backend:
+        - http://127.0.0.1:3000/
+        - http://127.0.0.1:4000/
+        - http://127.0.0.1:5000/
+
+thel.co:
+    default: true
+    host:
+        - localhost
+        - 127.0.0.1
+    port : 3000
+    # compress: auto
+    # keepalive: true
+    # lastmodified: false
+    # etag: true
+    # modules:
+    #     - etag: true
+    #     - something: xxx
+    routes:
+        - get /foo/bar:
+            json:
+                test: foo
+                bar: x
+                xxx: 123
+        - post /hello:
+            text: hello world
+        - get /static/*:
+            static: root_of_static_folder
+        - *:
+            proxy_pass: backend

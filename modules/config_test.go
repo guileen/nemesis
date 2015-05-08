@@ -1,7 +1,8 @@
-package config
+package modules
 
 import (
 	"log"
+	"os"
 	"strings"
 	"testing"
 
@@ -21,4 +22,10 @@ func TestConfig(t *testing.T) {
 	node, err := Parse(reader)
 	log.Println(node)
 	assert.NoError(t, err)
+	freader, err := os.Open("/Users/gl/workset/thel/thel_reverse_proxy/conf/config.yaml")
+	assert.NoError(t, err)
+	assert.NotNil(t, reader)
+	node, err = Parse(freader)
+	assert.NoError(t, err)
+	log.Println(node)
 }

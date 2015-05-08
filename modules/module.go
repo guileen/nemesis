@@ -1,4 +1,4 @@
-package core
+package modules
 
 type Context struct {
 	Req *Req
@@ -15,20 +15,17 @@ type Res struct {
 
 // Relations between module is tree like
 type Module interface {
-	Init(interface{})
-	GetSubModules() []*Module
+	Init(Node)
+	GetSubModules() []Module
 	// true to break, false to next
 	Process(*Context) bool
 }
 
-func LoadModules(conf interface{}) GroupModule {
-}
-
 type SimpleModule struct {
-	Modules []*Module
+	Modules []Module
 }
 
-func (sm *SimpleModule) GetSubModules() []*Module {
+func (sm *SimpleModule) GetSubModules() []Module {
 	return sm.Modules
 }
 

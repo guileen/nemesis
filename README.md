@@ -18,6 +18,8 @@ Reverse proxy caching
     * Memory caching
     * Local LevelDB caching
     * Remote Redis caching
+* Cache purge by tag
+    * If some resource has been forbiden, the busyness server can purge the cached content on the server.
 
 ## How it works
 
