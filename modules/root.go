@@ -49,10 +49,8 @@ func (root *RootModule) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 
 func (root *RootModule) Run() {
 	log.Println(root.Addresses)
-	done := make(chan bool)
 	for addr := range root.Addresses {
 		log.Println("Listen at", addr)
 		go http.ListenAndServe(addr, root)
 	}
-	<-done
 }
