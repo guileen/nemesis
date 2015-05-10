@@ -37,3 +37,10 @@ Handlers
 * Upstream Handler
 * Static Handler
 * Script Handler
+
+## 
+
+1 listener n hosts
+m hosts to 1 server
+1 server to k middlewares
+1 server to l routes

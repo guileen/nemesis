@@ -3,13 +3,64 @@ package modules
 import (
 	"log"
 	"net/http"
+	"strings"
 )
 
-type RootModule struct {
-	Upstreams     map[string]*UpstreamModule
+type Listener struct {
+	Address       string
 	Servers       map[string]*ServerModule
 	DefaultServer *ServerModule
-	Addresses     map[string]bool
+}
+
+func NewListener(addr string) *Listener {
+	return &Listener{Address: addr, Servers: make(map[string]*ServerModule)}
+}
+
+func (lsn *Listener) AddServer(server *ServerModule) {
+	if server.IsDefault {
+		if lsn.DefaultServer != nil {
+			log.Println("current default server ", lsn.DefaultServer)
+			panic("Duplicate default server on " + lsn.Address)
+		}
+		lsn.DefaultServer = server
+	}
+	for _, host := range server.Hosts {
+		if lsn.Servers[host] != nil {
+			panic("Duplicate server definition of [" + host + "] at [" + lsn.Address + "]")
+		}
+		lsn.Servers[host] = server
+	}
+}
+
+func (lsn *Listener) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+	log.Println("req", req)
+	log.Println("rw", rw)
+	host := req.Host
+	idx := strings.LastIndex(host, ":")
+	if idx >= 0 {
+		host = host[:idx]
+	}
+	server := lsn.Servers[host]
+	if server == nil {
+		server = lsn.DefaultServer
+	}
+	if server == nil {
+		log.Println("No match host", req.Host)
+	}
+	// Do server module
+}
+
+func (lsn *Listener) Run() {
+	log.Println("Listen at", lsn.Address)
+	err := http.ListenAndServe(lsn.Address, lsn)
+	if err != nil {
+		log.Fatal("Error to listen at "+lsn.Address, err)
+	}
+}
+
+type RootModule struct {
+	Upstreams map[string]*UpstreamModule
+	Listeners map[string]*Listener
 }
 
 func NewRootModule(root Node) *RootModule {
@@ -19,9 +70,8 @@ func NewRootModule(root Node) *RootModule {
 }
 
 func (root *RootModule) Init(node Node) {
+	root.Listeners = make(map[string]*Listener)
 	root.Upstreams = make(map[string]*UpstreamModule)
-	root.Servers = make(map[string]*ServerModule)
-	root.Addresses = make(map[string]bool)
 	conf := node.(Map)
 	for k, v := range conf {
 		switch k {
@@ -38,19 +88,22 @@ func (root *RootModule) Init(node Node) {
 			panic("Not support [" + k + "] yet.")
 		default:
 			server := NewServerModule(k, v)
-			root.Addresses[server.Address] = true
-			root.Servers[k] = server
+			root.getOrMakeListener(server.Address).AddServer(server)
 		}
 	}
 }
 
-func (root *RootModule) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+func (root *RootModule) getOrMakeListener(addr string) *Listener {
+	lsn := root.Listeners[addr]
+	if lsn == nil {
+		lsn = NewListener(addr)
+		root.Listeners[addr] = lsn
+	}
+	return lsn
 }
 
 func (root *RootModule) Run() {
-	log.Println(root.Addresses)
-	for addr := range root.Addresses {
-		log.Println("Listen at", addr)
-		go http.ListenAndServe(addr, root)
+	for _, lsn := range root.Listeners {
+		go lsn.Run()
 	}
 }

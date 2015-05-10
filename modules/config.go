@@ -51,6 +51,15 @@ func (s Scalar) String() string {
 	return string(s)
 }
 
+func (s Scalar) GetBool() bool {
+	if s == "true" || s == "yes" || s == "1" {
+		return true
+	} else if s == "false" || s == "no" || s == "0" {
+		return false
+	}
+	panic("Invalid bool value:" + s.String())
+}
+
 func (m Map) Key(key string) Node {
 	return m[key]
 }

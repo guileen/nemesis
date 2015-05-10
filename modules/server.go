@@ -3,9 +3,10 @@ package modules
 import "log"
 
 type ServerModule struct {
-	Address string
-	Hosts   []string
-	Routes  RoutesModule
+	Address   string
+	Hosts     []string
+	IsDefault bool
+	Routes    RoutesModule
 }
 
 func NewServerModule(host string, node Node) *ServerModule {
@@ -42,6 +43,8 @@ func (m *ServerModule) Init(node Node) {
 			for _, h := range v.(List) {
 				m.Hosts = append(m.Hosts, h.(Scalar).String())
 			}
+		case "default":
+			m.IsDefault = v.(Scalar).GetBool()
 		default:
 			log.Println("config>", k, ":", v)
 		}

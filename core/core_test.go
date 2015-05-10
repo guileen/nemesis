@@ -33,8 +33,8 @@ func TestCore(t *testing.T) {
 	})
 	go core.Run()
 	response, err := http.Get("http://127.0.0.1:4000/hello")
-	body, err := ioutil.ReadAll(response.Body)
 	assert.NoError(t, err)
+	body, err := ioutil.ReadAll(response.Body)
 	log.Println("response", string(body))
 	assert.NoError(t, err)
 }
