@@ -1,7 +1,6 @@
 package modules
 
 import (
-	"log"
 	"os"
 	"path"
 	"strings"
@@ -27,12 +26,12 @@ func TestConfig(t *testing.T) {
     - b
 `)
 	node, err := Parse(reader)
-	log.Println(node)
+	assert.NotNil(t, node)
 	assert.NoError(t, err)
 	freader, err := os.Open(GetConfigPath())
 	assert.NoError(t, err)
 	assert.NotNil(t, reader)
 	node, err = Parse(freader)
+	assert.NotNil(t, node)
 	assert.NoError(t, err)
-	log.Println(node)
 }

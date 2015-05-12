@@ -20,7 +20,6 @@ func TestRootModule(t *testing.T) {
 	assert.NoError(t, err)
 	// 	log.Println(node)
 	rootModule := NewRootModule(node)
-	log.Println("RootModule", rootModule)
 	go rootModule.Run()
 	<-time.After(10 * time.Millisecond)
 	resp, err := http.Get("http://127.0.0.1:8000/hello")

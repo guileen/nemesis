@@ -32,10 +32,9 @@ func (lsn *Listener) AddServer(server *ServerModule) {
 	}
 }
 
-func (lsn *Listener) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	log.Println("req", req)
-	log.Println("rw", rw)
-	host := req.Host
+func (lsn *Listener) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	log.Println("req", request)
+	host := request.Host
 	idx := strings.LastIndex(host, ":")
 	if idx >= 0 {
 		host = host[:idx]
@@ -45,9 +44,13 @@ func (lsn *Listener) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		server = lsn.DefaultServer
 	}
 	if server == nil {
-		log.Println("No match host", req.Host)
+		log.Println("No match host", request.Host)
 	}
+	req := &Req{request: request}
+	res := &Res{Req: req, writer: &writer}
+	req.Res = res
 	// Do server module
+	server.Process(req, res)
 }
 
 func (lsn *Listener) Run() {

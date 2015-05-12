@@ -1,24 +1,10 @@
 package modules
 
-type Context struct {
-	Req *Req
-	Res *Res
-}
-
-type Req struct {
-	Context *Context
-}
-
-type Res struct {
-	Context *Context
-}
-
 // Relations between module is tree like
 type Module interface {
 	Init(Node)
-	GetSubModules() []Module
 	// true to break, false to next
-	Process(*Context) bool
+	Process(*Req, *Res) bool
 }
 
 type SimpleModule struct {
@@ -29,9 +15,9 @@ func (sm *SimpleModule) GetSubModules() []Module {
 	return sm.Modules
 }
 
-func (sm *SimpleModule) ProcessSubModuels(ctx *Context) bool {
+func (sm *SimpleModule) ProcessSubModuels(req *Req, res *Res) bool {
 	for _, m := range sm.GetSubModules() {
-		if m.Process(ctx) {
+		if m.Process(req, res) {
 			return true
 		}
 	}

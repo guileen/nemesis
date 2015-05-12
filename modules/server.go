@@ -6,7 +6,8 @@ type ServerModule struct {
 	Address   string
 	Hosts     []string
 	IsDefault bool
-	Routes    RoutesModule
+	Routes    *RoutesModule
+	Modules   []Module
 }
 
 func NewServerModule(host string, node Node) *ServerModule {
@@ -45,9 +46,17 @@ func (m *ServerModule) Init(node Node) {
 			}
 		case "default":
 			m.IsDefault = v.(Scalar).GetBool()
+		case "routes":
+			m.Routes = NewRoutesModule(v)
 		default:
 			log.Println("config>", k, ":", v)
 		}
 	}
 	m.Address = regularAddress(m.Address)
+}
+
+func (m *ServerModule) Process(req *Req, res *Res) bool {
+	// TODO Process Modules
+	m.Routes.Process(req, res)
+	return false
 }

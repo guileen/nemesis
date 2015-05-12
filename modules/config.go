@@ -60,6 +60,14 @@ func (s Scalar) GetBool() bool {
 	panic("Invalid bool value:" + s.String())
 }
 
+func (m Map) Keys() []string {
+	keys := make([]string, 0, len(m))
+	for key := range m {
+		keys := append(keys, key)
+	}
+	return keys
+}
+
 func (m Map) Key(key string) Node {
 	return m[key]
 }
