@@ -57,6 +57,7 @@ func (m *ServerModule) Init(node Node) {
 
 func (m *ServerModule) Process(req *Req, res *Res) bool {
 	// TODO Process Modules
+	log.Println("server process")
 	m.Routes.Process(req, res)
 	return false
 }

@@ -24,7 +24,7 @@ thel.co:
     #     - etag: true
     #     - something: xxx
     routes:
-        - get /foo/bar:
+        - get /foo/json:
             json:
                 test: foo
                 bar: x

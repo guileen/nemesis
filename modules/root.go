@@ -47,7 +47,7 @@ func (lsn *Listener) ServeHTTP(writer http.ResponseWriter, request *http.Request
 		log.Println("No match host", request.Host)
 	}
 	req := &Req{request: request}
-	res := &Res{Req: req, writer: &writer}
+	res := &Res{Req: req, writer: writer}
 	req.Res = res
 	// Do server module
 	server.Process(req, res)

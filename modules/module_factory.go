@@ -24,9 +24,9 @@ func MakeModule(key string, node Node) Module {
 func MakeModules(mp Map) []Module {
 	modules := make([]Module, 0, len(mp))
 	keys := mp.Keys()
-	keys := SortConfKeys(keys)
-	for key := range keys {
-		modules := append(modules, MakeModule(key, mp[key]))
+	keys = SortConfKeys(keys)
+	for _, key := range keys {
+		modules = append(modules, MakeModule(key, mp[key]))
 	}
 	return modules
 }

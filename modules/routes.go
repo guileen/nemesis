@@ -26,7 +26,7 @@ func (m *RoutesModule) Init(node Node) {
 
 func (m *RoutesModule) Process(req *Req, res *Res) bool {
 	path := req.GetPath()
-	log.Println("path", path)
+	log.Println("Routes process path", path)
 	for _, route := range m.Routes {
 		if route.Match(req) {
 			route.Process(req, res)
@@ -56,8 +56,8 @@ func (r *Route) Init(node Node) {
 	}
 	key := mp.Keys()[0]
 	value := mp[key]
-	r.Modules = MakeModules(value)
-	pairs := regexp.MustCompile("\\s+").Split(key)
+	r.Modules = MakeModules(value.(Map))
+	pairs := regexp.MustCompile("\\s+").Split(key, 2)
 	r.Method = pairs[0]
 	r.Path = pairs[1]
 	// TODO ....
@@ -68,9 +68,14 @@ func (r *Route) GetPath() {
 }
 
 func (r *Route) Match(req *Req) bool {
-	return false
+	path := req.GetPath()
+	return path == r.Path
 }
 
 func (r *Route) Process(req *Req, res *Res) bool {
-	return false
+	log.Println("Route process")
+	for _, m := range r.Modules {
+		m.Process(req, res)
+	}
+	return true
 }

@@ -22,7 +22,7 @@ func TestRootModule(t *testing.T) {
 	rootModule := NewRootModule(node)
 	go rootModule.Run()
 	<-time.After(10 * time.Millisecond)
-	resp, err := http.Get("http://127.0.0.1:8000/hello")
+	resp, err := http.Get("http://127.0.0.1:8000/foo/json")
 	assert.NoError(t, err)
 	body, err := ioutil.ReadAll(resp.Body)
 	assert.NoError(t, err)

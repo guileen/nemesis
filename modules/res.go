@@ -4,5 +4,5 @@ import "net/http"
 
 type Res struct {
 	Req    *Req
-	writer *http.ResponseWriter
+	writer http.ResponseWriter
 }

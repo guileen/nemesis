@@ -63,7 +63,7 @@ func (s Scalar) GetBool() bool {
 func (m Map) Keys() []string {
 	keys := make([]string, 0, len(m))
 	for key := range m {
-		keys := append(keys, key)
+		keys = append(keys, key)
 	}
 	return keys
 }
