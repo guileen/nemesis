@@ -6,7 +6,7 @@ func SortConfKeys(keys []string) []string {
 	return keys
 }
 
-func MakeModule(key string, node Node) Module {
+func makeModule(key string, node Node) Module {
 	switch key {
 	case "json":
 		return NewJSONModule(node)
@@ -16,17 +16,26 @@ func MakeModule(key string, node Node) Module {
 		return NewStaticModule(node)
 	case "proxy_pass":
 		return NewProxyPassModule(node)
+	case "routes":
+		return NewRoutesModule(node)
 	default:
 		panic("Unknow module: " + key)
 	}
 }
 
-func MakeModules(mp Map) []Module {
-	modules := make([]Module, 0, len(mp))
+func MakeChain(mp Map) Module {
 	keys := mp.Keys()
 	keys = SortConfKeys(keys)
+	var firstModule Module
+	var prevModule Module
 	for _, key := range keys {
-		modules = append(modules, MakeModule(key, mp[key]))
+		module := makeModule(key, mp[key])
+		if prevModule != nil {
+			prevModule.SetNext(module)
+		} else {
+			firstModule = module
+		}
+		prevModule = module
 	}
-	return modules
+	return firstModule
 }

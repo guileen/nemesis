@@ -7,6 +7,7 @@ import (
 )
 
 type JSONModule struct {
+	BaseModule
 	text []byte
 }
 

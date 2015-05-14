@@ -6,8 +6,7 @@ type ServerModule struct {
 	Address   string
 	Hosts     []string
 	IsDefault bool
-	Routes    *RoutesModule
-	Modules   []Module
+	Chain     Module
 }
 
 func NewServerModule(host string, node Node) *ServerModule {
@@ -38,26 +37,29 @@ func (m *ServerModule) Init(node Node) {
 		switch k {
 		case "port":
 			m.Address = ":" + v.(Scalar).String()
+			delete(conf, k)
 		case "bind":
 			m.Address = v.(Scalar).String()
+			delete(conf, k)
 		case "host":
 			for _, h := range v.(List) {
 				m.Hosts = append(m.Hosts, h.(Scalar).String())
 			}
+			delete(conf, k)
 		case "default":
 			m.IsDefault = v.(Scalar).GetBool()
-		case "routes":
-			m.Routes = NewRoutesModule(v)
+			delete(conf, k)
 		default:
 			log.Println("config>", k, ":", v)
 		}
 	}
+	m.Chain = MakeChain(node.(Map))
 	m.Address = regularAddress(m.Address)
 }
 
 func (m *ServerModule) Process(req *Req, res *Res) bool {
 	// TODO Process Modules
 	log.Println("server process")
-	m.Routes.Process(req, res)
+	m.Chain.Process(req, res)
 	return false
 }

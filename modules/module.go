@@ -2,9 +2,23 @@ package modules
 
 // Relations between module is tree like
 type Module interface {
-	Init(Node)
+	// Init(Node)
 	// true to break, false to next
+	SetNext(Module)
+	Next() Module
 	Process(*Req, *Res) bool
+}
+
+type BaseModule struct {
+	next Module
+}
+
+func (base *BaseModule) SetNext(next Module) {
+	base.next = next
+}
+
+func (base *BaseModule) Next() Module {
+	return base.next
 }
 
 type SimpleModule struct {

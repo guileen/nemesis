@@ -6,6 +6,7 @@ import (
 )
 
 type TextModule struct {
+	BaseModule
 	text []byte
 }
 
@@ -16,11 +17,11 @@ func NewTextModule(node Node) *TextModule {
 }
 
 func (m *TextModule) Init(node Node) {
-	txt, ok := node.(Scalar).String()
+	scalar, ok := node.(Scalar)
 	if !ok {
 		panic("Bad text config:" + fmt.Sprintf("%b", node))
 	}
-	m.text = txt
+	m.text = []byte(scalar.String())
 }
 
 func (m *TextModule) Process(req *Req, res *Res) bool {

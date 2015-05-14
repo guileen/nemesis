@@ -1,6 +1,7 @@
 package modules
 
 type StaticModule struct {
+	BaseModule
 	rootPath string
 }
 
@@ -14,4 +15,5 @@ func (m *StaticModule) Init(node Node) {
 }
 
 func (m *StaticModule) Process(req *Req, res *Res) bool {
+	return false
 }

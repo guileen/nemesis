@@ -6,6 +6,7 @@ import (
 )
 
 type RoutesModule struct {
+	BaseModule
 	Routes []*Route
 }
 
@@ -40,7 +41,7 @@ type Route struct {
 	Method    string
 	Path      string
 	PathRegex string
-	Modules   []Module
+	Chain     Module
 }
 
 func NewRoute(node Node) *Route {
@@ -56,10 +57,12 @@ func (r *Route) Init(node Node) {
 	}
 	key := mp.Keys()[0]
 	value := mp[key]
-	r.Modules = MakeModules(value.(Map))
+	r.Chain = MakeChain(value.(Map))
 	pairs := regexp.MustCompile("\\s+").Split(key, 2)
 	r.Method = pairs[0]
-	r.Path = pairs[1]
+	if len(pairs) > 1 {
+		r.Path = pairs[1]
+	}
 	// TODO ....
 	// r.PathRegex = regexp.MustCompile( r.Path )
 }
@@ -74,8 +77,5 @@ func (r *Route) Match(req *Req) bool {
 
 func (r *Route) Process(req *Req, res *Res) bool {
 	log.Println("Route process")
-	for _, m := range r.Modules {
-		m.Process(req, res)
-	}
-	return true
+	return r.Chain.Process(req, res)
 }
