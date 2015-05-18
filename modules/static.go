@@ -1,8 +1,11 @@
 package modules
 
+import "net/http"
+
 type StaticModule struct {
 	BaseModule
-	rootPath string
+	rootPath   string
+	fileServer http.Handler
 }
 
 func NewStaticModule(node Node) *StaticModule {
@@ -12,8 +15,11 @@ func NewStaticModule(node Node) *StaticModule {
 }
 
 func (m *StaticModule) Init(node Node) {
+	m.rootPath = node.(Scalar).String()
+	m.fileServer = http.FileServer(http.Dir(m.rootPath))
 }
 
 func (m *StaticModule) Process(req *Req, res *Res) bool {
-	return false
+	m.fileServer.ServeHTTP(res.writer, req.request)
+	return true
 }

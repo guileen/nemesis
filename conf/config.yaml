@@ -6,8 +6,6 @@
 upstream:
     backend:
         - http://127.0.0.1:3000/
-        - http://127.0.0.1:4000/
-        - http://127.0.0.1:5000/
 
 thel.co:
     default: true
@@ -33,5 +31,14 @@ thel.co:
             text: hello world
         - get /static/*:
             static: root_of_static_folder
-        - *:
+        - get /proxy/*:
+            seturl: $1
             proxy_pass: backend
+
+static.test.com:
+    default: true
+    port: 3000
+    static: ./
+    routes:
+        - get /hello:
+            text: hello world

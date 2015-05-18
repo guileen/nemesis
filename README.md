@@ -38,9 +38,96 @@ Handlers
 * Static Handler
 * Script Handler
 
-## 
+## Config example
 
-1 listener n hosts
-m hosts to 1 server
-1 server to k middlewares
-1 server to l routes
+```
+upstream:
+    backend:
+        - http://127.0.0.1:3000/
+
+www.thel.co:
+    default: true
+    host:
+        - www.thel.co
+    port: 80
+    routes:
+        - get /static/*:
+            url: /$1
+            static: /path/to/static/root
+        - * /apiv1/*:
+            url: /$1
+            proxy: backend
+        - *:
+            status: 404
+            text: Not Found
+api.thel.co:
+    proxy:
+        - http://127.0.0.1:4000/
+        - http://127.0.0.1:4001/
+        - http://127.0.0.1:4002/
+
+static.thel.co:
+    static: /path/to/static/root
+```
+
+## Server
+
+```
+domain.name:
+    [server options]
+    [modules]
+```
+* default
+* host
+* port
+* modules
+
+## Modules
+
+### routes
+
+```
+routes:
+    - <method> <path>:
+        [modules]
+    ...
+```
+
+*
+
+### url
+
+```
+url: <expression>
+```
+
+$1
+
+### status
+
+`status: <status>`
+
+Set response status.
+
+### text
+
+`text: <text>`
+
+Set response text.
+
+### proxy
+
+```
+proxy:
+    - <upstream_url>
+```
+
+Proxy resonpse to upstream node.
+
+### static
+
+```
+static: <root_path>
+```
+
+Serve static files.

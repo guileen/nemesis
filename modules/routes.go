@@ -3,6 +3,7 @@ package modules
 import (
 	"log"
 	"regexp"
+	"strings"
 )
 
 type RoutesModule struct {
@@ -40,7 +41,7 @@ func (m *RoutesModule) Process(req *Req, res *Res) bool {
 type Route struct {
 	Method    string
 	Path      string
-	PathRegex string
+	PathRegex *regexp.Regexp
 	Chain     Module
 }
 
@@ -63,15 +64,20 @@ func (r *Route) Init(node Node) {
 	if len(pairs) > 1 {
 		r.Path = pairs[1]
 	}
-	// TODO ....
-	// r.PathRegex = regexp.MustCompile( r.Path )
-}
-
-func (r *Route) GetPath() {
+	if strings.Index(r.Path, "*") != -1 {
+		rstr := strings.Replace(r.Path, "*", "(.*?)", -1)
+		log.Println("rstr is:", rstr)
+		r.PathRegex = regexp.MustCompile(rstr)
+	}
 }
 
 func (r *Route) Match(req *Req) bool {
 	path := req.GetPath()
+	if r.PathRegex != nil {
+		matchs := r.PathRegex.FindAllString(path, -1)
+		log.Println("path ", path, " matchs ", matchs)
+		return len(matchs) > 0
+	}
 	return path == r.Path
 }
 

@@ -18,6 +18,8 @@ func makeModule(key string, node Node) Module {
 		return NewProxyPassModule(node)
 	case "routes":
 		return NewRoutesModule(node)
+	case "seturl":
+		return NewSetUrlModule(node.(Scalar))
 	default:
 		panic("Unknow module: " + key)
 	}

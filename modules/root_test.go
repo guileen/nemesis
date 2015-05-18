@@ -27,4 +27,9 @@ func TestRootModule(t *testing.T) {
 	body, err := ioutil.ReadAll(resp.Body)
 	assert.NoError(t, err)
 	log.Println("resp", string(body))
+	resp, err = http.Get("http://127.0.0.1:8000/static/foo.js")
+	assert.NoError(t, err)
+	body, err = ioutil.ReadAll(resp.Body)
+	assert.NoError(t, err)
+	log.Println("resp", string(body))
 }
