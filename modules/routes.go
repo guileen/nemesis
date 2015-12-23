@@ -30,9 +30,12 @@ func (m *RoutesModule) Process(req *Req, res *Res) bool {
 	path := req.GetPath()
 	log.Println("Routes process path", path)
 	for _, route := range m.Routes {
+		log.Println("test route", route.Method, route.Path)
 		if route.Match(req) {
-			route.Process(req, res)
-			break
+			log.Println("match")
+			if route.Process(req, res) {
+				return true
+			}
 		}
 	}
 	return false
@@ -59,6 +62,9 @@ func (r *Route) Init(node Node) {
 	key := mp.Keys()[0]
 	value := mp[key]
 	r.Chain = MakeChain(value.(Map))
+	if key == "*" {
+		key = "* *"
+	}
 	pairs := regexp.MustCompile("\\s+").Split(key, 2)
 	r.Method = pairs[0]
 	if len(pairs) > 1 {
