@@ -2,6 +2,21 @@
 
 Reverse proxy caching
 
+# install
+```
+$ go get github.com/guileen/nemesis
+$ nemesis
+```
+
+## Config Example
+
+```yaml
+api.example.com
+   /v1:
+      get *:
+      proxy-pass: http://127.0.0.1:3000
+```
+
 ## Features
 
 * Domain config
