@@ -27,6 +27,6 @@ func (m *JSONModule) Init(node Node) {
 
 func (m *JSONModule) Process(req *Req, res *Res) bool {
 	log.Println("Process json")
-	res.writer.Write(m.text)
+	res.Write(m.text)
 	return true
 }
