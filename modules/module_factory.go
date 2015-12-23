@@ -1,5 +1,7 @@
 package modules
 
+import "log"
+
 // Here to sort conf keys, to keep the module initial in right orders
 func SortConfKeys(keys []string) []string {
 	// TODO
@@ -26,12 +28,14 @@ func makeModule(key string, node Node) Module {
 }
 
 func MakeChain(mp Map) Module {
+	log.Println("MakeChain", mp)
 	keys := mp.Keys()
 	keys = SortConfKeys(keys)
 	var firstModule Module
 	var prevModule Module
 	for _, key := range keys {
 		module := makeModule(key, mp[key])
+		module.SetName(key)
 		if prevModule != nil {
 			prevModule.SetNext(module)
 		} else {
@@ -39,5 +43,12 @@ func MakeChain(mp Map) Module {
 		}
 		prevModule = module
 	}
+	m := firstModule
+	s := ""
+	for m != nil {
+		s = s + "->" + m.GetName()
+		m = m.Next()
+	}
+	log.Println(s)
 	return firstModule
 }

@@ -44,7 +44,7 @@ func (lsn *Listener) ServeHTTP(writer http.ResponseWriter, request *http.Request
 		server = lsn.DefaultServer
 	}
 	if server == nil {
-		log.Println("No match host", request.Host)
+		log.Fatal("No match host", request.Host)
 	}
 	req := &Req{request: request}
 	res := &Res{Req: req, writer: writer}
