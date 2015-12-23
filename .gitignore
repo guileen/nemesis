@@ -24,3 +24,4 @@ _testmain.go
 *.prof
 **/*.swp
 thel_reverse_proxy
+nemesis
