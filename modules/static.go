@@ -1,6 +1,9 @@
 package modules
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+)
 
 type StaticModule struct {
 	BaseModule
@@ -20,6 +23,10 @@ func (m *StaticModule) Init(node Node) {
 }
 
 func (m *StaticModule) Process(req *Req, res *Res) bool {
-	m.fileServer.ServeHTTP(res.writer, req.request)
+	log.Println("Static process:", req.GetPath())
+	m.fileServer.ServeHTTP(res, req.request)
+	if res.statusCode >= 400 && res.statusCode < 500 {
+		return false
+	}
 	return true
 }
